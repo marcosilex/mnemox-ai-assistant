@@ -11,6 +11,14 @@ load_dotenv()
 
 app = FastAPI()
 
+# Servir arquivos estáticos da pasta 'assets'
+# Como index.py está dentro de /api, voltamos um nível para achar /assets
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+assets_path = os.path.join(base_path, "assets")
+
+if os.path.exists(assets_path):
+    app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+
 # Configuração da IA (Agnóstico)
 def get_ai_client(header_key: str = None, req_model: str = None, req_url: str = None):
     # Usa a chave enviada pelo usuário via Header, ou cai na variável de ambiente do servidor
@@ -84,15 +92,15 @@ async def chat(request: ChatRequest, authorization: Optional[str] = Header(None)
 
 @app.get("/")
 async def read_index():
-    return FileResponse('index.html')
+    return FileResponse(os.path.join(base_path, 'index.html'))
 
 @app.get("/style.css")
 async def read_style():
-    return FileResponse('style.css')
+    return FileResponse(os.path.join(base_path, 'style.css'))
 
 @app.get("/script.js")
 async def read_script():
-    return FileResponse('script.js')
+    return FileResponse(os.path.join(base_path, 'script.js'))
 
 @app.get("/api/health")
 async def health():
