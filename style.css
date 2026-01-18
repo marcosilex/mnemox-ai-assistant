@@ -114,6 +114,40 @@ header {
     letter-spacing: 0.05em;
 }
 
+.provider-selector {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.provider-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.provider-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.provider-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
 #settings-panel h3 {
     font-size: 1.1rem;
     font-weight: 600;
@@ -184,6 +218,25 @@ header {
     color: white;
 }
 
+.coffee-btn {
+    background: #ffdd00 !important;
+    color: #000000 !important;
+    font-size: 1.2rem !important;
+    border-radius: 50% !important;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.coffee-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+    background: #ffea00 !important;
+}
+
 .secondary-btn {
     background: rgba(255, 255, 255, 0.05);
     color: white;
@@ -234,6 +287,20 @@ header {
     justify-content: center;
     gap: 10px;
     margin-bottom: 4px;
+}
+
+.logo-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#custom-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
 }
 
 .ai-icon {

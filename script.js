@@ -6,40 +6,124 @@ const settingsBtn = document.getElementById('settings-btn');
 const settingsPanel = document.getElementById('settings-panel');
 const apiKeyInput = document.getElementById('api-key-input');
 const aiNameInput = document.getElementById('ai-name-input');
+const aiSloganInput = document.getElementById('ai-slogan-input');
+const aiLogoInput = document.getElementById('ai-logo-input');
 const aiPersonaInput = document.getElementById('ai-persona-input');
-const aiProviderSelect = document.getElementById('ai-provider-select');
 const aiModelSelect = document.getElementById('ai-model-select');
+const aiModelCustom = document.getElementById('ai-model-custom');
+const customModelGroup = document.getElementById('custom-model-group');
 const saveKeyBtn = document.getElementById('save-key-btn');
 const clearChatBtn = document.getElementById('clear-chat-btn');
 const resetConfigBtn = document.getElementById('reset-config-btn');
 const exportChatBtn = document.getElementById('export-chat-btn');
 const headerTitle = document.querySelector('header h1');
+const sloganDisplay = document.getElementById('ai-slogan-display');
+const customLogo = document.getElementById('custom-logo');
+const aiIcon = document.querySelector('.ai-icon');
+const providerTabs = document.querySelectorAll('.provider-tab');
+
+// Configurações de Modelos por Provedor
+const MODELS_CONFIG = {
+    openai: [
+        { name: 'GPT-4o Mini', value: 'gpt-4o-mini' },
+        { name: 'GPT-4o (Poderoso)', value: 'gpt-4o' },
+        { name: 'o1-mini', value: 'o1-mini' },
+        { name: 'Outro (Digitar)', value: 'manual' }
+    ],
+    openrouter: [
+        { name: 'Gemini 2.0 (Grátis)', value: 'google/gemini-2.0-flash-exp:free' },
+        { name: 'Mistral 7B (Grátis)', value: 'mistralai/mistral-7b-instruct:free' },
+        { name: 'DeepSeek Chat', value: 'deepseek/deepseek-chat' },
+        { name: 'Outro (Digitar)', value: 'manual' }
+    ]
+};
 
 // Carrega as configurações do localStorage
 let messageHistory = JSON.parse(localStorage.getItem('jwlIA_history')) || [];
 let userApiKey = localStorage.getItem('jwlIA_api_key') || '';
 let aiName = localStorage.getItem('jwlIA_name') || 'JwlIA';
+let aiSlogan = localStorage.getItem('jwlIA_slogan') || '';
 let aiPersona = localStorage.getItem('jwlIA_persona') || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
-let aiProvider = localStorage.getItem('jwlIA_provider') || 'https://api.openai.com/v1';
+let aiProvider = localStorage.getItem('jwlIA_provider') || 'openai';
 let aiModel = localStorage.getItem('jwlIA_model') || 'gpt-4o-mini';
+let aiLogoUrl = localStorage.getItem('jwlIA_logo_url') || '';
 
 // Inicializa os campos da UI
 function initUI() {
-    if (userApiKey) apiKeyInput.value = userApiKey;
+    apiKeyInput.value = userApiKey;
     aiNameInput.value = aiName;
+    aiSloganInput.value = aiSlogan;
+    aiLogoInput.value = aiLogoUrl;
     aiPersonaInput.value = aiPersona;
-    aiProviderSelect.value = aiProvider;
-    aiModelSelect.value = aiModel;
+
     headerTitle.innerText = aiName;
+    sloganDisplay.innerText = aiSlogan;
     userInput.placeholder = `Conversar com ${aiName}...`;
 
-    const initialWelcome = document.querySelector('.welcome-message .message-bubble p');
-    if (initialWelcome && messageHistory.length === 0) {
-        initialWelcome.innerText = `Olá! Eu sou a ${aiName}. Como posso te ajudar hoje?`;
+    // Logo Update
+    if (aiLogoUrl) {
+        customLogo.src = aiLogoUrl;
+        customLogo.classList.remove('hidden');
+        aiIcon.classList.add('hidden');
+    } else {
+        customLogo.classList.add('hidden');
+        aiIcon.classList.remove('hidden');
+    }
+
+    // Provider Tabs
+    providerTabs.forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.id === aiProvider);
+    });
+
+    updateKeyLabel();
+    updateModelSelect();
+}
+
+function updateKeyLabel() {
+    const label = document.getElementById('key-label');
+    label.innerText = `Chave da API (${aiProvider === 'openai' ? 'OpenAI' : 'OpenRouter'})`;
+    apiKeyInput.placeholder = aiProvider === 'openai' ? 'sk-...' : 'sk-or-...';
+}
+
+function updateModelSelect() {
+    const models = MODELS_CONFIG[aiProvider] || [];
+    aiModelSelect.innerHTML = '';
+
+    models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.value;
+        opt.innerText = m.name;
+        aiModelSelect.appendChild(opt);
+    });
+
+    // Se o modelo salvo não estiver na lista (foi manual), coloca em "manual"
+    const isStandard = models.some(m => m.value === aiModel);
+    if (!isStandard && aiModel) {
+        aiModelSelect.value = 'manual';
+        aiModelCustom.value = aiModel;
+        customModelGroup.style.display = 'block';
+    } else {
+        aiModelSelect.value = aiModel || models[0].value;
+        customModelGroup.style.display = 'none';
+        aiModelCustom.value = '';
     }
 }
 
-initUI();
+// Event Listeners para Tabs
+providerTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        aiProvider = tab.dataset.id;
+        providerTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        updateKeyLabel();
+        updateModelSelect();
+    });
+});
+
+// Detectar se escolheu Manual
+aiModelSelect.addEventListener('change', () => {
+    customModelGroup.style.display = aiModelSelect.value === 'manual' ? 'block' : 'none';
+});
 
 // Alternar painel de configurações
 settingsBtn.addEventListener('click', () => {
@@ -50,105 +134,75 @@ settingsBtn.addEventListener('click', () => {
 saveKeyBtn.addEventListener('click', () => {
     userApiKey = apiKeyInput.value.trim();
     aiName = aiNameInput.value.trim() || 'JwlIA';
+    aiSlogan = aiSloganInput.value.trim();
+    aiLogoUrl = aiLogoInput.value.trim();
     aiPersona = aiPersonaInput.value.trim() || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
-    aiProvider = aiProviderSelect.value;
-    aiModel = aiModelSelect.value;
+
+    const selectedModel = aiModelSelect.value;
+    aiModel = selectedModel === 'manual' ? aiModelCustom.value.trim() : selectedModel;
 
     localStorage.setItem('jwlIA_api_key', userApiKey);
     localStorage.setItem('jwlIA_name', aiName);
+    localStorage.setItem('jwlIA_slogan', aiSlogan);
+    localStorage.setItem('jwlIA_logo_url', aiLogoUrl);
     localStorage.setItem('jwlIA_persona', aiPersona);
     localStorage.setItem('jwlIA_provider', aiProvider);
     localStorage.setItem('jwlIA_model', aiModel);
 
     initUI();
-    alert('Configurações salvas com sucesso!');
+    alert('Configurações salvas!');
     settingsPanel.classList.add('hidden');
 });
 
-// Redefinir Tudo (Reset de Fábrica)
+// Redefinir Tudo
 resetConfigBtn.addEventListener('click', () => {
-    if (confirm('Deseja resetar todas as configurações (Chave, Nome, Tema)? Isso não apaga o chat.')) {
-        const keys = ['jwlIA_api_key', 'jwlIA_name', 'jwlIA_persona', 'jwlIA_provider', 'jwlIA_model'];
-        keys.forEach(k => localStorage.removeItem(k));
+    if (confirm('Deseja resetar TUDO (Chaves, Nome, Logo)? Isso apagará o histórico também.')) {
+        localStorage.clear();
         window.location.reload();
     }
 });
 
-// Exportar Chat em TXT
+// Exportar Chat
 exportChatBtn.addEventListener('click', () => {
-    if (messageHistory.length === 0) return alert('Não há mensagens para exportar.');
-
-    let content = `Histórico de Conversa - ${aiName}\nData: ${new Date().toLocaleString()}\n\n`;
-    messageHistory.forEach(msg => {
-        const label = msg.role === 'user' ? 'Você' : aiName;
-        content += `[${label}]: ${msg.content}\n\n`;
-    });
-
-    const blob = new Blob([content], { type: 'text/plain' });
+    if (messageHistory.length === 0) return alert('Chat vazio.');
+    let text = `Chat com ${aiName}\n---\n`;
+    messageHistory.forEach(m => text += `[${m.role === 'user' ? 'Você' : aiName}]: ${m.content}\n\n`);
+    const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `conversa-${aiName.toLowerCase()}-${new Date().getTime()}.txt`;
-    document.body.appendChild(a);
+    a.download = `conversa-${aiName.toLowerCase()}-${Date.now()}.txt`;
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 });
 
-// Limpar Histórico de Chat
+// Limpar Chat
 clearChatBtn.addEventListener('click', () => {
-    if (confirm('Tem certeza que deseja apagar todo o histórico de mensagens?')) {
+    if (confirm('Limpar histórico de mensagens?')) {
         messageHistory = [];
         localStorage.removeItem('jwlIA_history');
-
-        // Limpa o container visualmente (mantendo apenas o boas-vindas)
-        chatContainer.innerHTML = '';
-        const welcome = document.createElement('div');
-        welcome.className = 'welcome-message';
-        welcome.innerHTML = `
-            <div class="bot-avatar">J</div>
-            <div class="message-bubble">Olá! Eu sou a ${aiName}. Como posso te ajudar hoje?</div>
-        `;
-        chatContainer.appendChild(welcome);
-
-        alert('Histórico apagado!');
-        settingsPanel.classList.add('hidden');
+        location.reload();
     }
 });
 
-function appendMessage(role, content, isHistory = false) {
+// Envio de Mensagem
+function appendMessage(role, content) {
     const wrapper = document.createElement('div');
-    wrapper.classList.add('message-wrapper');
-    wrapper.classList.add(role === 'user' ? 'user-wrapper' : 'bot-wrapper');
-
-    const avatar = document.createElement('div');
-    avatar.classList.add('bot-avatar');
-    avatar.innerText = role === 'user' ? 'U' : 'J';
-    if (role === 'user') avatar.style.background = 'rgba(255,255,255,0.1)';
+    wrapper.classList.add('message-wrapper', role === 'user' ? 'user-wrapper' : 'bot-wrapper');
 
     const bubble = document.createElement('div');
     bubble.classList.add('message-bubble');
     bubble.innerText = content;
 
-    wrapper.appendChild(avatar);
     wrapper.appendChild(bubble);
     chatContainer.appendChild(wrapper);
-
-    // Auto scroll apenas se estivermos enviando agora (não no load do histórico)
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Renderiza o histórico inicial
+// Renderiza Histórico
 if (messageHistory.length > 0) {
-    // Remove a mensagem de boas-vindas padrão se houver histórico
     const welcome = document.querySelector('.welcome-message');
     if (welcome) welcome.remove();
-
-    messageHistory.forEach(msg => appendMessage(msg.role, msg.content, true));
-}
-
-function saveHistory() {
-    localStorage.setItem('jwlIA_history', JSON.stringify(messageHistory));
+    messageHistory.forEach(m => appendMessage(m.role, m.content));
 }
 
 chatForm.addEventListener('submit', async (e) => {
@@ -156,49 +210,47 @@ chatForm.addEventListener('submit', async (e) => {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Adiciona mensagem do usuário na tela e no histórico
     appendMessage('user', text);
     messageHistory.push({ role: 'user', content: text });
-    saveHistory();
     userInput.value = '';
 
-    // Indicador de digitação
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'typing';
-    typingIndicator.innerText = 'JwlIA está pensando...';
-    chatContainer.appendChild(typingIndicator);
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerText = `${aiName} está pensando...`;
+    chatContainer.appendChild(typing);
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     try {
-        const response = await fetch('/api/chat', {
+        const body = {
+            messages: messageHistory,
+            system_instruction: aiPersona,
+            ai_model: aiModel,
+            ai_base_url: aiProvider === 'openai' ? 'https://api.openai.com/v1' : 'https://openrouter.ai/api/v1'
+        };
+
+        const res = await fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': userApiKey ? `Bearer ${userApiKey}` : ''
             },
-            body: JSON.stringify({
-                messages: messageHistory,
-                system_instruction: aiPersona,
-                ai_model: aiModel,
-                ai_base_url: aiProvider
-            })
+            body: JSON.stringify(body)
         });
 
-        const data = await response.json();
-
-        // Remove indicador de digitação
-        if (typingIndicator.parentNode) chatContainer.removeChild(typingIndicator);
+        const data = await res.json();
+        typing.remove();
 
         if (data.response) {
             appendMessage('assistant', data.response);
             messageHistory.push({ role: 'assistant', content: data.response });
-            saveHistory();
+            localStorage.setItem('jwlIA_history', JSON.stringify(messageHistory));
         } else {
-            appendMessage('assistant', 'Ops, tive um probleminha. Verifique se sua chave da API está correta.');
+            appendMessage('assistant', 'Erro na API. Verifique sua chave.');
         }
-    } catch (error) {
-        if (typingIndicator.parentNode) chatContainer.removeChild(typingIndicator);
-        appendMessage('assistant', 'Erro de conexão com o servidor.');
-        console.error(error);
+    } catch (err) {
+        if (typing) typing.remove();
+        appendMessage('assistant', 'Erro de conexão.');
     }
 });
+
+initUI();

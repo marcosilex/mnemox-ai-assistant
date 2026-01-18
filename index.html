@@ -15,10 +15,13 @@
     <div class="app-container">
         <header>
             <div class="logo">
-                <span class="ai-icon">✨</span>
+                <div class="logo-container">
+                    <span class="ai-icon">✨</span>
+                    <img id="custom-logo" src="" alt="Logo" class="hidden">
+                </div>
                 <h1>JwlIA</h1>
             </div>
-            <p class="subtitle">Podcast do Marco e a Robozada!</p>
+            <p class="subtitle" id="ai-slogan-display"></p>
             <button id="settings-btn" title="Configurações">⚙️</button>
         </header>
 
@@ -26,33 +29,43 @@
         <div id="settings-panel" class="hidden">
             <h3>Configurações da JwlIA</h3>
 
-            <div class="settings-grid">
-                <div class="settings-group">
-                    <label>Provedor (API)</label>
-                    <select id="ai-provider-select">
-                        <option value="https://api.openai.com/v1">OpenAI</option>
-                        <option value="https://openrouter.ai/api/v1">OpenRouter</option>
-                    </select>
-                </div>
-                <div class="settings-group">
-                    <label>Modelo</label>
-                    <select id="ai-model-select">
-                        <option value="gpt-4o-mini">GPT-4o Mini</option>
-                        <option value="gpt-4o">GPT-4o</option>
-                        <option value="o1-mini">o1-mini</option>
-                        <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 (Free)</option>
-                    </select>
-                </div>
+            <div class="provider-selector">
+                <button class="provider-tab active" data-id="openai">OpenAI</button>
+                <button class="provider-tab" data-id="openrouter">OpenRouter</button>
             </div>
 
-            <div class="settings-group">
-                <label>Chave da API</label>
+            <div class="settings-group" id="key-group">
+                <label id="key-label">Chave da API (OpenAI)</label>
                 <input type="password" id="api-key-input" placeholder="sk-...">
             </div>
 
+            <div class="settings-grid">
+                <div class="settings-group">
+                    <label>Modelo</label>
+                    <select id="ai-model-select">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div class="settings-group" id="custom-model-group" style="display: none;">
+                    <label>Nome do Modelo (Manual)</label>
+                    <input type="text" id="ai-model-custom" placeholder="ex: deepseek/deepseek-chat">
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-group">
+                    <label>Nome da Assistente</label>
+                    <input type="text" id="ai-name-input" placeholder="Ex: JwlIA">
+                </div>
+                <div class="settings-group">
+                    <label>Slogan (Subtítulo)</label>
+                    <input type="text" id="ai-slogan-input" placeholder="Ex: Podcast do Marco...">
+                </div>
+            </div>
+
             <div class="settings-group">
-                <label>Nome da Assistente</label>
-                <input type="text" id="ai-name-input" placeholder="Ex: JwlIA">
+                <label>URL do Logo (Opcional)</label>
+                <input type="text" id="ai-logo-input" placeholder="https://exemplo.com/logo.png">
             </div>
 
             <div class="settings-group">
@@ -61,12 +74,14 @@
             </div>
 
             <div class="settings-actions">
-                <button id="save-key-btn" class="primary-btn">Salvar</button>
-                <button id="export-chat-btn" class="secondary-btn">📥 Exportar</button>
-                <button id="reset-config-btn" class="warning-btn">🔄 Reset</button>
-                <button id="clear-chat-btn" class="danger-btn">🗑️ Limpar</button>
+                <button id="save-key-btn" class="primary-btn">Salvar Alterações</button>
+                <button id="export-chat-btn" class="secondary-btn">📥 Exportar Chat</button>
+                <button id="clear-chat-btn" class="danger-btn">🗑️ Limpar Chat</button>
+                <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-btn"
+                    title="Apoie o Desenvolvedor">☕</a>
             </div>
-            <p class="privacy-note">Sua chave e dados são salvos apenas localmente.</p>
+            <button id="reset-config-btn" class="warning-btn">🔄 Reset de Fábrica</button>
+            <p class="privacy-note">Sua chave e dados nunca saem do seu navegador.</p>
         </div>
 
         <main id="chat-container">

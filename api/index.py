@@ -24,10 +24,19 @@ def get_ai_client(header_key: str = None, req_model: str = None, req_url: str = 
     
     if not api_key:
         return None, None, None
+    
+    # Headers específicos para OpenRouter (Boa prática e necessário para alguns modelos)
+    extra_headers = {}
+    if "openrouter.ai" in base_url.lower():
+        extra_headers = {
+            "HTTP-Referer": "https://jwlia-ai.vercel.app", # Identifica a origem para o OpenRouter
+            "X-Title": "JwlIA AI Assistant",
+        }
         
     client = OpenAI(
         api_key=api_key,
-        base_url=base_url
+        base_url=base_url,
+        default_headers=extra_headers
     )
     return client, model_name, api_key
 
