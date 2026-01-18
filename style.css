@@ -88,6 +88,19 @@ header {
     flex-direction: column;
     gap: 16px;
     animation: slideDown 0.3s ease-out;
+    max-height: 85vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-border) transparent;
+}
+
+#settings-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#settings-panel::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 10px;
 }
 
 #settings-panel.hidden {
@@ -148,10 +161,26 @@ header {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-#settings-panel h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 4px;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: white;
 }
 
 #api-key-input,

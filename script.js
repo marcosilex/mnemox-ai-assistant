@@ -13,6 +13,8 @@ const aiModelSelect = document.getElementById('ai-model-select');
 const aiModelCustom = document.getElementById('ai-model-custom');
 const customModelGroup = document.getElementById('custom-model-group');
 const saveKeyBtn = document.getElementById('save-key-btn');
+const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
 const clearChatBtn = document.getElementById('clear-chat-btn');
 const resetConfigBtn = document.getElementById('reset-config-btn');
 const exportChatBtn = document.getElementById('export-chat-btn');
@@ -129,6 +131,15 @@ aiModelSelect.addEventListener('change', () => {
 settingsBtn.addEventListener('click', () => {
     settingsPanel.classList.toggle('hidden');
 });
+
+// Fechar / Cancelar (sem salvar)
+function closeSettings() {
+    initUI(); // Reverte os campos para os valores salvos no estado (JS variables)
+    settingsPanel.classList.add('hidden');
+}
+
+closeSettingsBtn.addEventListener('click', closeSettings);
+cancelSettingsBtn.addEventListener('click', closeSettings);
 
 // Salvar todas as configurações
 saveKeyBtn.addEventListener('click', () => {

@@ -27,7 +27,10 @@
 
         <!-- Seção de Configuração (Escondida por padrão) -->
         <div id="settings-panel" class="hidden">
-            <h3>Configurações da JwlIA</h3>
+            <div class="settings-header">
+                <h3>Configurações da JwlIA</h3>
+                <button id="close-settings-btn" class="close-btn" title="Fechar">&times;</button>
+            </div>
 
             <div class="provider-selector">
                 <button class="provider-tab active" data-id="openai">OpenAI</button>
@@ -75,6 +78,7 @@
 
             <div class="settings-actions">
                 <button id="save-key-btn" class="primary-btn">Salvar Alterações</button>
+                <button id="cancel-settings-btn" class="secondary-btn">Cancelar</button>
                 <button id="export-chat-btn" class="secondary-btn">📥 Exportar Chat</button>
                 <button id="clear-chat-btn" class="danger-btn">🗑️ Limpar Chat</button>
                 <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-btn"
