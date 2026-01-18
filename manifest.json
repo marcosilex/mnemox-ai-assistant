@@ -1,0 +1,17 @@
+{
+    "name": "Mnemox AI Assistant",
+    "short_name": "Mnemox",
+    "description": "Sua Assistente Bio-Digital Inteligente e Premium",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f0f1a",
+    "theme_color": "#6366f1",
+    "icons": [
+        {
+            "src": "assets/mnemox-logo.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "any maskable"
+        }
+    ]
+}

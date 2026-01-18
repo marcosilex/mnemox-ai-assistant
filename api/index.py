@@ -102,6 +102,14 @@ async def read_style():
 async def read_script():
     return FileResponse(os.path.join(base_path, 'script.js'))
 
+@app.get("/manifest.json")
+async def read_manifest():
+    return FileResponse(os.path.join(base_path, 'manifest.json'))
+
+@app.get("/sw.js")
+async def read_sw():
+    return FileResponse(os.path.join(base_path, 'sw.js'))
+
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "provider": "Vercel Deployment"}

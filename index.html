@@ -5,6 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mnemox - Sua Assistente Pessoal</title>
+
+    <!-- PWA & Mobile Optimization -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0f1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/mnemox-logo.jpg">
+    <link rel="icon" type="image/jpg" href="assets/mnemox-logo.jpg">
+
+    <!-- OpenGraph (LinkedIn, WhatsApp Share) -->
+    <meta property="og:title" content="Mnemox - Sua Assistente Bio-Digital">
+    <meta property="og:description"
+        content="IA Pessoal Premium com design Glassmorphism e suporte multi-provedor. Experimente a produtividade biodigital.">
+    <meta property="og:image" content="assets/mnemox-logo.jpg">
+    <meta property="og:url" content="https://mnemox-ai.vercel.app">
+    <meta property="og:type" content="website">
+
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +32,8 @@
     <div class="app-container">
         <header>
             <div class="header-left">
-                <div id="dev-logo-btn" class="logo-circle" title="Ver Desenvolvedor">
-                    <img src="assets/logo-dev.png" alt="Logo Marco">
+                <div id="dev-logo-btn" class="logo-circle" title="Sobre o Mnemox">
+                    <img src="assets/mnemox-logo.jpg" alt="Mnemox Logo">
                 </div>
             </div>
 
@@ -189,6 +206,15 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Mnemox Service Worker registrado!'))
+                    .catch(err => console.log('Falha ao registrar SW:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
