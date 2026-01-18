@@ -1,21 +1,22 @@
-# ✨ JwlIA - Sua Assistente Pessoal Premium
+# ✨ Mnemox - Sua Assistente Bio-Digital Premium
 
-JwlIA é uma inteligência artificial pessoal projetada para ser sua companheira de produtividade e conhecimento, com foco nas discussões do **Podcast do Marco e a Robozada**.
+Mnemox é uma inteligência artificial pessoal projetada para ser sua companheira de produtividade e conhecimento, inspirada na fluidez das conexões biodigitais e na eficiência cerebral.
 
 ![Interface Preview](https://img.shields.io/badge/UI-Modern_Glassmorphism-blueviolet)
 ![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)
 ![AI](https://img.shields.io/badge/IA-OpenAI_/_OpenRouter-orange)
 
-O **JwlIA** é um assistente pessoal inteligente desenvolvido com FastAPI e a API da OpenAI (ou compatíveis). Este projeto nasceu durante a **Jornada Python da Hashtag Treinamentos** e foi evoluído para uma aplicação web moderna e responsiva.
+O **Mnemox** é um assistente pessoal inteligente desenvolvido com FastAPI e a API da OpenAI (ou compatíveis). Este projeto nasceu para ser uma solução moderna, rápida e totalmente personalizável.
 
 ---
 
 ### 🚀 Funcionalidades
-- **Arquitetura Moderna:** Backend em Python (FastAPI) e Frontend minimalista.
+- **Arquitetura Moderna:** Backend em Python (FastAPI) e Frontend minimalista de alta performance.
 - **BYOK (Bring Your Own Key):** Use sua própria chave de API diretamente na interface ou via variáveis de ambiente.
 - **Privacidade:** Histórico de conversas salvo localmente no seu navegador (`localStorage`).
 - **Design Premium:** Interface com Dark Mode, Glassmorphism e total responsividade mobile.
 - **Multi-Provider:** Suporte para OpenAI, OpenRouter e outros provedores compatíveis.
+- **Exportação Independente:** Exporte histórico de chat ou suas definições de persona de forma independente.
 
 ---
 
@@ -35,7 +36,7 @@ Este projeto foi construído seguindo o modelo **BYOK**. Você não precisa expo
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/marcosilex/jwlia-ai-assistant.git
+   git clone https://github.com/marcosilex/mnemox-ai-assistant.git
    cd "Aula 4 - Criação de Chatbot com IA em Tempo Real"
    ```
 
@@ -55,7 +56,7 @@ Este projeto foi construído seguindo o modelo **BYOK**. Você não precisa expo
 
 ## ☁️ Deploy no Vercel
 
-O projeto já contém o arquivo `vercel.json` e a estrutura de pastas `/api` e `/public` necessária para o deploy automático. Basta conectar seu repositório GitHub ao painel do Vercel e configurar a Environment Variable `OPENAI_API_KEY`.
+O projeto já contém o arquivo `vercel.json` e a estrutura necessária para o deploy automático. Basta conectar seu repositório GitHub ao painel do Vercel e configurar as variáveis de ambiente necessárias.
 
 ---
-*Desenvolvido durante a Jornada Python - Aula 4 e aprimorado com design premium.*
+*Desenvolvido como uma solução robusta para assistentes pessoais digitais.*

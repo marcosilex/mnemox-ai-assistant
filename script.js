@@ -41,14 +41,14 @@ const devCardCoffeeBtn = document.getElementById('dev-card-coffee-btn');
 const copyPixBtn = document.getElementById('copy-pix-btn');
 const modalCloses = document.querySelectorAll('.modal-close, .modal-close-action');
 
-// Carrega as configurações do localStorage
-let messageHistory = JSON.parse(localStorage.getItem('jwlIA_history')) || [];
-let userApiKey = localStorage.getItem('jwlIA_api_key') || '';
-let aiName = localStorage.getItem('jwlIA_name') || 'JwlIA';
-let aiSlogan = localStorage.getItem('jwlIA_slogan') || '';
-let aiPersona = localStorage.getItem('jwlIA_persona') || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
-let aiProvider = localStorage.getItem('jwlIA_provider') || 'openai';
-let aiModel = localStorage.getItem('jwlIA_model') || 'gpt-4o-mini';
+// Carrega as configurações do localStorage (Migrado de jwlIA para mnemox)
+let messageHistory = JSON.parse(localStorage.getItem('mnemox_history')) || JSON.parse(localStorage.getItem('jwlIA_history')) || [];
+let userApiKey = localStorage.getItem('mnemox_api_key') || localStorage.getItem('jwlIA_api_key') || '';
+let aiName = localStorage.getItem('mnemox_name') || localStorage.getItem('jwlIA_name') || 'Mnemox';
+let aiSlogan = localStorage.getItem('mnemox_slogan') || localStorage.getItem('jwlIA_slogan') || '';
+let aiPersona = localStorage.getItem('mnemox_persona') || localStorage.getItem('jwlIA_persona') || 'Você é Mnemox, uma assistente pessoal inteligente e prestativa dedicada à organização e produtividade.';
+let aiProvider = localStorage.getItem('mnemox_provider') || localStorage.getItem('jwlIA_provider') || 'openai';
+let aiModel = localStorage.getItem('mnemox_model') || localStorage.getItem('jwlIA_model') || 'gpt-4o-mini';
 
 // Inicializa os campos da UI
 function initUI() {
@@ -63,7 +63,7 @@ function initUI() {
     sloganDisplay.innerText = aiSlogan;
     userInput.placeholder = `Conversar com ${aiName}...`;
 
-    // Atualiza info do Dev parametrizada (Pode ser estendido para outros lugares)
+    // Atualiza info do Dev parametrizada
     document.querySelector('.dev-profile h2').innerText = DEV_CONFIG.name;
     document.querySelector('.dev-contact strong').innerText = DEV_CONFIG.email;
     document.getElementById('pix-key').innerText = DEV_CONFIG.pixKey;
@@ -160,17 +160,17 @@ cancelSettingsBtn.addEventListener('click', closeSettings);
 
 saveKeyBtn.addEventListener('click', () => {
     userApiKey = apiKeyInput.value.trim();
-    aiName = aiNameInput.value.trim() || 'JwlIA';
+    aiName = aiNameInput.value.trim() || 'Mnemox';
     aiSlogan = aiSloganInput.value.trim();
     aiModel = aiModelInput.value.trim() || 'gpt-4o-mini';
-    aiPersona = aiPersonaInput.value.trim() || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
+    aiPersona = aiPersonaInput.value.trim() || 'Você é Mnemox, uma assistente pessoal inteligente e prestativa.';
 
-    localStorage.setItem('jwlIA_api_key', userApiKey);
-    localStorage.setItem('jwlIA_name', aiName);
-    localStorage.setItem('jwlIA_slogan', aiSlogan);
-    localStorage.setItem('jwlIA_model', aiModel);
-    localStorage.setItem('jwlIA_persona', aiPersona);
-    localStorage.setItem('jwlIA_provider', aiProvider);
+    localStorage.setItem('mnemox_api_key', userApiKey);
+    localStorage.setItem('mnemox_name', aiName);
+    localStorage.setItem('mnemox_slogan', aiSlogan);
+    localStorage.setItem('mnemox_model', aiModel);
+    localStorage.setItem('mnemox_persona', aiPersona);
+    localStorage.setItem('mnemox_provider', aiProvider);
 
     initUI();
     alert('Configurações salvas!');
@@ -210,7 +210,7 @@ exportPersonaBtn.addEventListener('click', () => {
 clearChatBtn.addEventListener('click', () => {
     if (confirm('Limpar histórico de mensagens?')) {
         messageHistory = [];
-        localStorage.removeItem('jwlIA_history');
+        localStorage.removeItem('mnemox_history');
         renderWelcome();
         settingsPanel.classList.add('hidden');
     }
@@ -283,7 +283,7 @@ chatForm.addEventListener('submit', async (e) => {
         if (data.response) {
             appendMessage('assistant', data.response);
             messageHistory.push({ role: 'assistant', content: data.response });
-            localStorage.setItem('jwlIA_history', JSON.stringify(messageHistory));
+            localStorage.setItem('mnemox_history', JSON.stringify(messageHistory));
         } else {
             appendMessage('assistant', 'Erro na API. Verifique sua chave.');
         }
