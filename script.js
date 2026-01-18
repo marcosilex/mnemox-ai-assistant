@@ -1,8 +1,17 @@
+// --- CONFIGURAÇÃO DE BRANDING (Para facilitar Open Source) ---
+const DEV_CONFIG = {
+    name: "MARCO ANANIAS",
+    email: "marcosilex@gmail.com",
+    pixKey: "marcosilex@gmail.com",
+    role: "Desenvolvedor"
+};
+
 const chatContainer = document.getElementById('chat-container');
 const chatForm = document.getElementById('chat-form');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 const settingsBtn = document.getElementById('settings-btn');
+const helpBtn = document.getElementById('help-btn');
 const settingsPanel = document.getElementById('settings-panel');
 const apiKeyInput = document.getElementById('api-key-input');
 const aiNameInput = document.getElementById('ai-name-input');
@@ -15,6 +24,7 @@ const closeSettingsBtn = document.getElementById('close-settings-btn');
 const clearChatBtn = document.getElementById('clear-chat-btn');
 const resetConfigBtn = document.getElementById('reset-config-btn');
 const exportChatBtn = document.getElementById('export-chat-btn');
+const exportPersonaBtn = document.getElementById('export-persona-btn');
 const headerTitle = document.getElementById('app-title');
 const settingsPanelTitle = document.getElementById('settings-panel-title');
 const sloganDisplay = document.getElementById('ai-slogan-display');
@@ -23,12 +33,13 @@ const providerTabs = document.querySelectorAll('.provider-tab');
 // Novos Modais
 const devModal = document.getElementById('dev-modal');
 const pixModal = document.getElementById('pix-modal');
+const helpModal = document.getElementById('help-modal');
 const devLogoBtn = document.getElementById('dev-logo-btn');
 const mainCoffeeBtn = document.getElementById('main-coffee-btn');
 const settingsCoffeeBtn = document.getElementById('settings-coffee-btn');
 const devCardCoffeeBtn = document.getElementById('dev-card-coffee-btn');
 const copyPixBtn = document.getElementById('copy-pix-btn');
-const modalCloses = document.querySelectorAll('.modal-close');
+const modalCloses = document.querySelectorAll('.modal-close, .modal-close-action');
 
 // Carrega as configurações do localStorage
 let messageHistory = JSON.parse(localStorage.getItem('jwlIA_history')) || [];
@@ -51,6 +62,11 @@ function initUI() {
     settingsPanelTitle.innerText = `✨ Configurações de ${aiName}`;
     sloganDisplay.innerText = aiSlogan;
     userInput.placeholder = `Conversar com ${aiName}...`;
+
+    // Atualiza info do Dev parametrizada (Pode ser estendido para outros lugares)
+    document.querySelector('.dev-profile h2').innerText = DEV_CONFIG.name;
+    document.querySelector('.dev-contact strong').innerText = DEV_CONFIG.email;
+    document.getElementById('pix-key').innerText = DEV_CONFIG.pixKey;
 
     // Provider Tabs
     providerTabs.forEach(tab => {
@@ -90,11 +106,13 @@ function openModal(modal) {
 function closeAllModals() {
     devModal.classList.add('hidden');
     pixModal.classList.add('hidden');
+    helpModal.classList.add('hidden');
 }
 
 devLogoBtn.addEventListener('click', () => openModal(devModal));
 mainCoffeeBtn.addEventListener('click', () => openModal(pixModal));
 settingsCoffeeBtn.addEventListener('click', () => openModal(pixModal));
+helpBtn.addEventListener('click', () => openModal(helpModal));
 devCardCoffeeBtn.addEventListener('click', () => {
     devModal.classList.add('hidden');
     openModal(pixModal);
@@ -103,7 +121,7 @@ devCardCoffeeBtn.addEventListener('click', () => {
 modalCloses.forEach(btn => btn.addEventListener('click', closeAllModals));
 
 // Fechar modal ao clicar fora do card
-[devModal, pixModal].forEach(modal => {
+[devModal, pixModal, helpModal].forEach(modal => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeAllModals();
     });
@@ -111,8 +129,7 @@ modalCloses.forEach(btn => btn.addEventListener('click', closeAllModals));
 
 // Copiar Pix
 copyPixBtn.addEventListener('click', () => {
-    const pixKey = "marcosilex@gmail.com";
-    navigator.clipboard.writeText(pixKey).then(() => {
+    navigator.clipboard.writeText(DEV_CONFIG.pixKey).then(() => {
         const originalText = copyPixBtn.innerText;
         copyPixBtn.innerText = "✅ Código Copiado!";
         setTimeout(() => copyPixBtn.innerText = originalText, 2000);
@@ -161,22 +178,33 @@ saveKeyBtn.addEventListener('click', () => {
 });
 
 resetConfigBtn.addEventListener('click', () => {
-    if (confirm('Deseja resetar TUDO (Chaves, Nome, Histórico)?')) {
+    if (confirm('Deseja resetar TUDO (Chaves, Nome, Histórico)? Isso limpará as configurações salvos no navegador.')) {
         localStorage.clear();
         window.location.reload();
     }
 });
 
-exportChatBtn.addEventListener('click', () => {
-    if (messageHistory.length === 0) return alert('Chat vazio.');
-    let text = `Chat com ${aiName}\n---\n`;
-    messageHistory.forEach(m => text += `[${m.role === 'user' ? 'Você' : aiName}]: ${m.content}\n\n`);
+function downloadTextFile(filename, text) {
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `conversa-${aiName.toLowerCase()}-${Date.now()}.txt`;
+    a.download = filename;
     a.click();
+    URL.revokeObjectURL(url);
+}
+
+exportChatBtn.addEventListener('click', () => {
+    if (messageHistory.length === 0) return alert('Chat vazio.');
+    let text = `Chat com ${aiName}\n---\n`;
+    messageHistory.forEach(m => text += `[${m.role === 'user' ? 'Você' : aiName}]: ${m.content}\n\n`);
+    downloadTextFile(`conversa-${aiName.toLowerCase()}-${Date.now()}.txt`, text);
+});
+
+exportPersonaBtn.addEventListener('click', () => {
+    if (!aiPersona) return alert('Persona não configurada.');
+    const text = `Persona de ${aiName}\n---\n\n${aiPersona}`;
+    downloadTextFile(`persona-${aiName.toLowerCase()}-${Date.now()}.txt`, text);
 });
 
 clearChatBtn.addEventListener('click', () => {

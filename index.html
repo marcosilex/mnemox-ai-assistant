@@ -26,6 +26,7 @@
             </div>
 
             <div class="header-right">
+                <button id="help-btn" title="Ajuda">❓</button>
                 <button id="main-coffee-btn" class="coffee-icon-btn" title="Pague um Café">
                     <img src="assets/icon-coffee.png" alt="Café">
                 </button>
@@ -77,7 +78,8 @@
             <div class="settings-actions">
                 <button id="save-key-btn" class="primary-btn">Salvar Alterações</button>
                 <button id="cancel-settings-btn" class="secondary-btn">Cancelar</button>
-                <button id="export-chat-btn" class="secondary-btn">📥 Exportar Chat</button>
+                <button id="export-chat-btn" class="secondary-btn">📥 Export Chat</button>
+                <button id="export-persona-btn" class="secondary-btn">📥 Export Persona</button>
                 <button id="clear-chat-btn" class="danger-btn">🗑️ Limpar Chat</button>
                 <button id="settings-coffee-btn" class="coffee-btn-img" title="Apoie o Desenvolvedor">
                     <img src="assets/icon-coffee.png" alt="Café">
@@ -150,6 +152,37 @@
             </div>
 
             <button id="copy-pix-btn" class="primary-btn">📋 Copiar Código Pix</button>
+        </div>
+    </div>
+
+    <!-- Modal Guia de Ajuda -->
+    <div id="help-modal" class="modal-overlay hidden">
+        <div class="modal-card help-card">
+            <button class="modal-close">&times;</button>
+            <h2>Guia de Ajuda JwlIA ❓</h2>
+            <div class="help-content">
+                <div class="help-item">
+                    <h3>🔄 Reset de Fábrica</h3>
+                    <p>Limpa todos os dados salvos no seu navegador (Chaves, Nome, Histórico e Personalidade). Use se
+                        quiser começar do zero ou limpar seus dados por segurança.</p>
+                </div>
+                <div class="help-item">
+                    <h3>🧠 Personalidade / Tema</h3>
+                    <p>Aqui você molda o "cérebro" da IA. Dê instruções claras como "Você é um instrutor de yoga" para
+                        que ela assuma esse papel nas respostas.</p>
+                </div>
+                <div class="help-item">
+                    <h3>🤖 Modelos de IA</h3>
+                    <p>Você pode digitar o nome do modelo manualmente. Ex: <code>gpt-4o-mini</code> (OpenAI) ou
+                        <code>google/gemini-2.0-flash-exp:free</code> (OpenRouter).</p>
+                </div>
+                <div class="help-item">
+                    <h3>📥 Exportações</h3>
+                    <p>Você pode exportar o <strong>Chat</strong> (conversa atual) ou a <strong>Persona</strong> (suas
+                        instruções de sistema) para arquivos de texto.</p>
+                </div>
+            </div>
+            <button class="primary-btn modal-close-action">Entendido!</button>
         </div>
     </div>
 
