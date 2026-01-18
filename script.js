@@ -7,7 +7,6 @@ const settingsPanel = document.getElementById('settings-panel');
 const apiKeyInput = document.getElementById('api-key-input');
 const aiNameInput = document.getElementById('ai-name-input');
 const aiSloganInput = document.getElementById('ai-slogan-input');
-const aiLogoInput = document.getElementById('ai-logo-input');
 const aiPersonaInput = document.getElementById('ai-persona-input');
 const aiModelSelect = document.getElementById('ai-model-select');
 const aiModelCustom = document.getElementById('ai-model-custom');
@@ -18,11 +17,19 @@ const closeSettingsBtn = document.getElementById('close-settings-btn');
 const clearChatBtn = document.getElementById('clear-chat-btn');
 const resetConfigBtn = document.getElementById('reset-config-btn');
 const exportChatBtn = document.getElementById('export-chat-btn');
-const headerTitle = document.querySelector('header h1');
+const headerTitle = document.getElementById('app-title');
 const sloganDisplay = document.getElementById('ai-slogan-display');
-const customLogo = document.getElementById('custom-logo');
-const aiIcon = document.querySelector('.ai-icon');
 const providerTabs = document.querySelectorAll('.provider-tab');
+
+// Novos Modais
+const devModal = document.getElementById('dev-modal');
+const pixModal = document.getElementById('pix-modal');
+const devLogoBtn = document.getElementById('dev-logo-btn');
+const mainCoffeeBtn = document.getElementById('main-coffee-btn');
+const settingsCoffeeBtn = document.getElementById('settings-coffee-btn');
+const devCardCoffeeBtn = document.getElementById('dev-card-coffee-btn');
+const copyPixBtn = document.getElementById('copy-pix-btn');
+const modalCloses = document.querySelectorAll('.modal-close');
 
 // Configurações de Modelos por Provedor
 const MODELS_CONFIG = {
@@ -48,29 +55,17 @@ let aiSlogan = localStorage.getItem('jwlIA_slogan') || '';
 let aiPersona = localStorage.getItem('jwlIA_persona') || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
 let aiProvider = localStorage.getItem('jwlIA_provider') || 'openai';
 let aiModel = localStorage.getItem('jwlIA_model') || 'gpt-4o-mini';
-let aiLogoUrl = localStorage.getItem('jwlIA_logo_url') || '';
 
 // Inicializa os campos da UI
 function initUI() {
     apiKeyInput.value = userApiKey;
     aiNameInput.value = aiName;
     aiSloganInput.value = aiSlogan;
-    aiLogoInput.value = aiLogoUrl;
     aiPersonaInput.value = aiPersona;
 
     headerTitle.innerText = aiName;
     sloganDisplay.innerText = aiSlogan;
     userInput.placeholder = `Conversar com ${aiName}...`;
-
-    // Logo Update
-    if (aiLogoUrl) {
-        customLogo.src = aiLogoUrl;
-        customLogo.classList.remove('hidden');
-        aiIcon.classList.add('hidden');
-    } else {
-        customLogo.classList.add('hidden');
-        aiIcon.classList.remove('hidden');
-    }
 
     // Provider Tabs
     providerTabs.forEach(tab => {
@@ -79,12 +74,28 @@ function initUI() {
 
     updateKeyLabel();
     updateModelSelect();
+    renderWelcome();
+}
+
+function renderWelcome() {
+    if (messageHistory.length === 0) {
+        chatContainer.innerHTML = '';
+        const welcome = document.createElement('div');
+        welcome.className = 'welcome-message';
+        welcome.innerHTML = `
+            <div class="bot-avatar">${aiName.charAt(0).toUpperCase()}</div>
+            <div class="message-bubble">Olá! Eu sou a ${aiName}. Como posso te ajudar hoje?</div>
+        `;
+        chatContainer.appendChild(welcome);
+    }
 }
 
 function updateKeyLabel() {
     const label = document.getElementById('key-label');
-    label.innerText = `Chave da API (${aiProvider === 'openai' ? 'OpenAI' : 'OpenRouter'})`;
-    apiKeyInput.placeholder = aiProvider === 'openai' ? 'sk-...' : 'sk-or-...';
+    if (label) {
+        label.innerText = `Chave da API (${aiProvider === 'openai' ? 'OpenAI' : 'OpenRouter'})`;
+        apiKeyInput.placeholder = aiProvider === 'openai' ? 'sk-...' : 'sk-or-...';
+    }
 }
 
 function updateModelSelect() {
@@ -98,7 +109,6 @@ function updateModelSelect() {
         aiModelSelect.appendChild(opt);
     });
 
-    // Se o modelo salvo não estiver na lista (foi manual), coloca em "manual"
     const isStandard = models.some(m => m.value === aiModel);
     if (!isStandard && aiModel) {
         aiModelSelect.value = 'manual';
@@ -111,6 +121,43 @@ function updateModelSelect() {
     }
 }
 
+// Gestão de Modais
+function openModal(modal) {
+    modal.classList.remove('hidden');
+}
+
+function closeAllModals() {
+    devModal.classList.add('hidden');
+    pixModal.classList.add('hidden');
+}
+
+devLogoBtn.addEventListener('click', () => openModal(devModal));
+mainCoffeeBtn.addEventListener('click', () => openModal(pixModal));
+settingsCoffeeBtn.addEventListener('click', () => openModal(pixModal));
+devCardCoffeeBtn.addEventListener('click', () => {
+    devModal.classList.add('hidden');
+    openModal(pixModal);
+});
+
+modalCloses.forEach(btn => btn.addEventListener('click', closeAllModals));
+
+// Fechar modal ao clicar fora do card
+[devModal, pixModal].forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeAllModals();
+    });
+});
+
+// Copiar Pix
+copyPixBtn.addEventListener('click', () => {
+    const pixKey = "marcosilex@gmail.com";
+    navigator.clipboard.writeText(pixKey).then(() => {
+        const originalText = copyPixBtn.innerText;
+        copyPixBtn.innerText = "✅ Código Copiado!";
+        setTimeout(() => copyPixBtn.innerText = originalText, 2000);
+    });
+});
+
 // Event Listeners para Tabs
 providerTabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -122,31 +169,26 @@ providerTabs.forEach(tab => {
     });
 });
 
-// Detectar se escolheu Manual
 aiModelSelect.addEventListener('change', () => {
     customModelGroup.style.display = aiModelSelect.value === 'manual' ? 'block' : 'none';
 });
 
-// Alternar painel de configurações
 settingsBtn.addEventListener('click', () => {
     settingsPanel.classList.toggle('hidden');
 });
 
-// Fechar / Cancelar (sem salvar)
 function closeSettings() {
-    initUI(); // Reverte os campos para os valores salvos no estado (JS variables)
+    initUI();
     settingsPanel.classList.add('hidden');
 }
 
 closeSettingsBtn.addEventListener('click', closeSettings);
 cancelSettingsBtn.addEventListener('click', closeSettings);
 
-// Salvar todas as configurações
 saveKeyBtn.addEventListener('click', () => {
     userApiKey = apiKeyInput.value.trim();
     aiName = aiNameInput.value.trim() || 'JwlIA';
     aiSlogan = aiSloganInput.value.trim();
-    aiLogoUrl = aiLogoInput.value.trim();
     aiPersona = aiPersonaInput.value.trim() || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
 
     const selectedModel = aiModelSelect.value;
@@ -155,7 +197,6 @@ saveKeyBtn.addEventListener('click', () => {
     localStorage.setItem('jwlIA_api_key', userApiKey);
     localStorage.setItem('jwlIA_name', aiName);
     localStorage.setItem('jwlIA_slogan', aiSlogan);
-    localStorage.setItem('jwlIA_logo_url', aiLogoUrl);
     localStorage.setItem('jwlIA_persona', aiPersona);
     localStorage.setItem('jwlIA_provider', aiProvider);
     localStorage.setItem('jwlIA_model', aiModel);
@@ -165,15 +206,13 @@ saveKeyBtn.addEventListener('click', () => {
     settingsPanel.classList.add('hidden');
 });
 
-// Redefinir Tudo
 resetConfigBtn.addEventListener('click', () => {
-    if (confirm('Deseja resetar TUDO (Chaves, Nome, Logo)? Isso apagará o histórico também.')) {
+    if (confirm('Deseja resetar TUDO (Chaves, Nome, Histórico)?')) {
         localStorage.clear();
         window.location.reload();
     }
 });
 
-// Exportar Chat
 exportChatBtn.addEventListener('click', () => {
     if (messageHistory.length === 0) return alert('Chat vazio.');
     let text = `Chat com ${aiName}\n---\n`;
@@ -186,19 +225,26 @@ exportChatBtn.addEventListener('click', () => {
     a.click();
 });
 
-// Limpar Chat
 clearChatBtn.addEventListener('click', () => {
     if (confirm('Limpar histórico de mensagens?')) {
         messageHistory = [];
         localStorage.removeItem('jwlIA_history');
-        location.reload();
+        renderWelcome();
+        settingsPanel.classList.add('hidden');
     }
 });
 
-// Envio de Mensagem
 function appendMessage(role, content) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('message-wrapper', role === 'user' ? 'user-wrapper' : 'bot-wrapper');
+
+    // Avatar dinâmico
+    if (role === 'assistant') {
+        const avatar = document.createElement('div');
+        avatar.className = 'bot-avatar';
+        avatar.innerText = aiName.charAt(0).toUpperCase();
+        wrapper.appendChild(avatar);
+    }
 
     const bubble = document.createElement('div');
     bubble.classList.add('message-bubble');
@@ -209,11 +255,12 @@ function appendMessage(role, content) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Renderiza Histórico
+// Histórico Inicial
 if (messageHistory.length > 0) {
-    const welcome = document.querySelector('.welcome-message');
-    if (welcome) welcome.remove();
+    chatContainer.innerHTML = '';
     messageHistory.forEach(m => appendMessage(m.role, m.content));
+} else {
+    renderWelcome();
 }
 
 chatForm.addEventListener('submit', async (e) => {

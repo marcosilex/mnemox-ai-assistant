@@ -14,21 +14,29 @@
 <body>
     <div class="app-container">
         <header>
-            <div class="logo">
-                <div class="logo-container">
-                    <span class="ai-icon">✨</span>
-                    <img id="custom-logo" src="" alt="Logo" class="hidden">
+            <div class="header-left">
+                <div id="dev-logo-btn" class="logo-circle" title="Ver Desenvolvedor">
+                    <img src="assets/logo-dev.png" alt="Logo Marco">
                 </div>
-                <h1>JwlIA</h1>
             </div>
-            <p class="subtitle" id="ai-slogan-display"></p>
-            <button id="settings-btn" title="Configurações">⚙️</button>
+
+            <div class="header-center">
+                <h1 id="app-title">JwlIA</h1>
+                <p class="subtitle" id="ai-slogan-display"></p>
+            </div>
+
+            <div class="header-right">
+                <button id="main-coffee-btn" class="coffee-icon-btn" title="Pague um Café">
+                    <img src="assets/icon-coffee.png" alt="Café">
+                </button>
+                <button id="settings-btn" title="Configurações">⚙️</button>
+            </div>
         </header>
 
         <!-- Seção de Configuração (Escondida por padrão) -->
         <div id="settings-panel" class="hidden">
             <div class="settings-header">
-                <h3>Configurações da JwlIA</h3>
+                <h3>✨ Configurações da JwlIA</h3>
                 <button id="close-settings-btn" class="close-btn" title="Fechar">&times;</button>
             </div>
 
@@ -67,11 +75,6 @@
             </div>
 
             <div class="settings-group">
-                <label>URL do Logo (Opcional)</label>
-                <input type="text" id="ai-logo-input" placeholder="https://exemplo.com/logo.png">
-            </div>
-
-            <div class="settings-group">
                 <label>Personalidade / Tema</label>
                 <textarea id="ai-persona-input" placeholder="Ex: Você é um especialista em futebol..."></textarea>
             </div>
@@ -81,8 +84,7 @@
                 <button id="cancel-settings-btn" class="secondary-btn">Cancelar</button>
                 <button id="export-chat-btn" class="secondary-btn">📥 Exportar Chat</button>
                 <button id="clear-chat-btn" class="danger-btn">🗑️ Limpar Chat</button>
-                <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-btn"
-                    title="Apoie o Desenvolvedor">☕</a>
+                <button id="settings-coffee-btn" class="coffee-btn" title="Apoie o Desenvolvedor">☕</button>
             </div>
             <button id="reset-config-btn" class="warning-btn">🔄 Reset de Fábrica</button>
             <p class="privacy-note">Sua chave e dados nunca saem do seu navegador.</p>
@@ -109,6 +111,51 @@
             </form>
         </section>
     </div>
+    <!-- Modal Cartão do Desenvolvedor -->
+    <div id="dev-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="modal-close">&times;</button>
+            <div class="dev-profile">
+                <div class="dev-avatar">
+                    <img src="assets/logo-dev.png" alt="Marco Ananias">
+                </div>
+                <h2>MARCO ANANIAS</h2>
+                <p class="dev-role">Desenvolvedor</p>
+                <div class="dev-contact">
+                    <p>SUPORTE & CONTATO</p>
+                    <div class="contact-box">
+                        <span>📧</span>
+                        <strong>marcosilex@gmail.com</strong>
+                    </div>
+                </div>
+                <p class="copyright">© 2025 JwlIA AI Chatbot</p>
+                <button id="dev-card-coffee-btn" class="pix-trigger-btn">☕ Pague um Café</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pix / Doação -->
+    <div id="pix-modal" class="modal-overlay hidden">
+        <div class="modal-card pix-card">
+            <button class="modal-close">&times;</button>
+            <h2>Pague um Café ☕</h2>
+            <p>Gostou da JwlIA? Apoie o desenvolvedor com qualquer valor via Pix!</p>
+
+            <div class="qr-container">
+                <img src="assets/modal-pix-ref.png" alt="QR Code Pix" id="pix-qr">
+            </div>
+
+            <div class="pix-key-box">
+                <label>CHAVE PIX (EMAIL)</label>
+                <div class="key-display">
+                    <span id="pix-key">marcosilex@gmail.com</span>
+                </div>
+            </div>
+
+            <button id="copy-pix-btn" class="primary-btn">📋 Copiar Código Pix</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
