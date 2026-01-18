@@ -80,6 +80,10 @@ header {
     transform: rotate(45deg);
 }
 
+.hidden {
+    display: none !important;
+}
+
 #settings-panel {
     background: rgba(0, 0, 0, 0.2);
     padding: 24px;
@@ -101,10 +105,6 @@ header {
 #settings-panel::-webkit-scrollbar-thumb {
     background: var(--glass-border);
     border-radius: 10px;
-}
-
-#settings-panel.hidden {
-    display: none;
 }
 
 .settings-grid {
