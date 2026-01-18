@@ -177,9 +177,9 @@ body {
 
 #api-key-input,
 #ai-name-input,
-#ai-persona-input,
-#ai-provider-select,
-#ai-model-select {
+#ai-slogan-input,
+#ai-model-input,
+#ai-persona-input {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
     border-radius: 10px;
@@ -189,19 +189,15 @@ body {
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.2s;
-}
-
-#ai-provider-select option,
-#ai-model-select option {
-    background: #1e293b;
-    color: white;
+    width: 100%;
+    /* Ensure full width in grid */
 }
 
 #api-key-input:focus,
 #ai-name-input:focus,
-#ai-persona-input:focus,
-#ai-provider-select:focus,
-#ai-model-select:focus {
+#ai-slogan-input:focus,
+#ai-model-input:focus,
+#ai-persona-input:focus {
     border-color: var(--primary);
 }
 

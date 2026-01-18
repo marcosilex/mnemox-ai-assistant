@@ -36,7 +36,7 @@
         <!-- Seção de Configuração (Escondida por padrão) -->
         <div id="settings-panel" class="hidden">
             <div class="settings-header">
-                <h3>✨ Configurações da JwlIA</h3>
+                <h3 id="settings-panel-title">✨ Configurações da JwlIA</h3>
                 <button id="close-settings-btn" class="close-btn" title="Fechar">&times;</button>
             </div>
 
@@ -52,25 +52,20 @@
 
             <div class="settings-grid">
                 <div class="settings-group">
-                    <label>Modelo</label>
-                    <select id="ai-model-select">
-                        <!-- Preenchido via JS -->
-                    </select>
-                </div>
-                <div class="settings-group" id="custom-model-group" style="display: none;">
-                    <label>Nome do Modelo (Manual)</label>
-                    <input type="text" id="ai-model-custom" placeholder="ex: deepseek/deepseek-chat">
-                </div>
-            </div>
-
-            <div class="settings-grid">
-                <div class="settings-group">
                     <label>Nome da Assistente</label>
                     <input type="text" id="ai-name-input" placeholder="Ex: JwlIA">
                 </div>
                 <div class="settings-group">
                     <label>Slogan (Subtítulo)</label>
                     <input type="text" id="ai-slogan-input" placeholder="Ex: Podcast do Marco...">
+                </div>
+            </div>
+
+            <div class="settings-grid" style="margin-top: 12px;">
+                <div class="settings-group">
+                    <label>Modelo de IA</label>
+                    <input type="text" id="ai-model-input"
+                        placeholder="Ex: gpt-4o-mini ou google/gemini-2.0-flash-exp:free">
                 </div>
             </div>
 

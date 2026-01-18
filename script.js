@@ -7,10 +7,8 @@ const settingsPanel = document.getElementById('settings-panel');
 const apiKeyInput = document.getElementById('api-key-input');
 const aiNameInput = document.getElementById('ai-name-input');
 const aiSloganInput = document.getElementById('ai-slogan-input');
+const aiModelInput = document.getElementById('ai-model-input');
 const aiPersonaInput = document.getElementById('ai-persona-input');
-const aiModelSelect = document.getElementById('ai-model-select');
-const aiModelCustom = document.getElementById('ai-model-custom');
-const customModelGroup = document.getElementById('custom-model-group');
 const saveKeyBtn = document.getElementById('save-key-btn');
 const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings-btn');
@@ -18,6 +16,7 @@ const clearChatBtn = document.getElementById('clear-chat-btn');
 const resetConfigBtn = document.getElementById('reset-config-btn');
 const exportChatBtn = document.getElementById('export-chat-btn');
 const headerTitle = document.getElementById('app-title');
+const settingsPanelTitle = document.getElementById('settings-panel-title');
 const sloganDisplay = document.getElementById('ai-slogan-display');
 const providerTabs = document.querySelectorAll('.provider-tab');
 
@@ -30,22 +29,6 @@ const settingsCoffeeBtn = document.getElementById('settings-coffee-btn');
 const devCardCoffeeBtn = document.getElementById('dev-card-coffee-btn');
 const copyPixBtn = document.getElementById('copy-pix-btn');
 const modalCloses = document.querySelectorAll('.modal-close');
-
-// Configurações de Modelos por Provedor
-const MODELS_CONFIG = {
-    openai: [
-        { name: 'GPT-4o Mini', value: 'gpt-4o-mini' },
-        { name: 'GPT-4o (Poderoso)', value: 'gpt-4o' },
-        { name: 'o1-mini', value: 'o1-mini' },
-        { name: 'Outro (Digitar)', value: 'manual' }
-    ],
-    openrouter: [
-        { name: 'Gemini 2.0 (Grátis)', value: 'google/gemini-2.0-flash-exp:free' },
-        { name: 'Mistral 7B (Grátis)', value: 'mistralai/mistral-7b-instruct:free' },
-        { name: 'DeepSeek Chat', value: 'deepseek/deepseek-chat' },
-        { name: 'Outro (Digitar)', value: 'manual' }
-    ]
-};
 
 // Carrega as configurações do localStorage
 let messageHistory = JSON.parse(localStorage.getItem('jwlIA_history')) || [];
@@ -61,9 +44,11 @@ function initUI() {
     apiKeyInput.value = userApiKey;
     aiNameInput.value = aiName;
     aiSloganInput.value = aiSlogan;
+    aiModelInput.value = aiModel;
     aiPersonaInput.value = aiPersona;
 
     headerTitle.innerText = aiName;
+    settingsPanelTitle.innerText = `✨ Configurações de ${aiName}`;
     sloganDisplay.innerText = aiSlogan;
     userInput.placeholder = `Conversar com ${aiName}...`;
 
@@ -73,7 +58,6 @@ function initUI() {
     });
 
     updateKeyLabel();
-    updateModelSelect();
     renderWelcome();
 }
 
@@ -95,29 +79,6 @@ function updateKeyLabel() {
     if (label) {
         label.innerText = `Chave da API (${aiProvider === 'openai' ? 'OpenAI' : 'OpenRouter'})`;
         apiKeyInput.placeholder = aiProvider === 'openai' ? 'sk-...' : 'sk-or-...';
-    }
-}
-
-function updateModelSelect() {
-    const models = MODELS_CONFIG[aiProvider] || [];
-    aiModelSelect.innerHTML = '';
-
-    models.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m.value;
-        opt.innerText = m.name;
-        aiModelSelect.appendChild(opt);
-    });
-
-    const isStandard = models.some(m => m.value === aiModel);
-    if (!isStandard && aiModel) {
-        aiModelSelect.value = 'manual';
-        aiModelCustom.value = aiModel;
-        customModelGroup.style.display = 'block';
-    } else {
-        aiModelSelect.value = aiModel || models[0].value;
-        customModelGroup.style.display = 'none';
-        aiModelCustom.value = '';
     }
 }
 
@@ -165,12 +126,7 @@ providerTabs.forEach(tab => {
         providerTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         updateKeyLabel();
-        updateModelSelect();
     });
-});
-
-aiModelSelect.addEventListener('change', () => {
-    customModelGroup.style.display = aiModelSelect.value === 'manual' ? 'block' : 'none';
 });
 
 settingsBtn.addEventListener('click', () => {
@@ -189,17 +145,15 @@ saveKeyBtn.addEventListener('click', () => {
     userApiKey = apiKeyInput.value.trim();
     aiName = aiNameInput.value.trim() || 'JwlIA';
     aiSlogan = aiSloganInput.value.trim();
+    aiModel = aiModelInput.value.trim() || 'gpt-4o-mini';
     aiPersona = aiPersonaInput.value.trim() || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
-
-    const selectedModel = aiModelSelect.value;
-    aiModel = selectedModel === 'manual' ? aiModelCustom.value.trim() : selectedModel;
 
     localStorage.setItem('jwlIA_api_key', userApiKey);
     localStorage.setItem('jwlIA_name', aiName);
     localStorage.setItem('jwlIA_slogan', aiSlogan);
+    localStorage.setItem('jwlIA_model', aiModel);
     localStorage.setItem('jwlIA_persona', aiPersona);
     localStorage.setItem('jwlIA_provider', aiProvider);
-    localStorage.setItem('jwlIA_model', aiModel);
 
     initUI();
     alert('Configurações salvas!');
