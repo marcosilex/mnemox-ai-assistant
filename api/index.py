@@ -12,11 +12,15 @@ load_dotenv()
 app = FastAPI()
 
 # Configuração da IA (Agnóstico)
-def get_ai_client(header_key: str = None):
+def get_ai_client(header_key: str = None, req_model: str = None, req_url: str = None):
     # Usa a chave enviada pelo usuário via Header, ou cai na variável de ambiente do servidor
     api_key = header_key if header_key else os.getenv("AI_API_KEY", os.getenv("OPENAI_API_KEY"))
-    base_url = os.getenv("AI_BASE_URL", "https://api.openai.com/v1")
-    model_name = os.getenv("AI_MODEL", "gpt-4o-mini")
+    
+    # Prioriza o Provedor/URL enviado pelo teclado do usuário, senão usa o padrão
+    base_url = req_url if req_url else os.getenv("AI_BASE_URL", "https://api.openai.com/v1")
+    
+    # Prioriza o Modelo enviado pelo teclado do usuário, senão usa o padrão
+    model_name = req_model if req_model else os.getenv("AI_MODEL", "gpt-4o-mini")
     
     if not api_key:
         return None, None, None
@@ -34,6 +38,8 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
     system_instruction: Optional[str] = "Você é JwlIA, uma assistente pessoal inteligente e prestativa."
+    ai_model: Optional[str] = None
+    ai_base_url: Optional[str] = None
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest, authorization: Optional[str] = Header(None)):
@@ -41,7 +47,7 @@ async def chat(request: ChatRequest, authorization: Optional[str] = Header(None)
     if authorization and authorization.startswith("Bearer "):
         header_key = authorization.replace("Bearer ", "")
     
-    client, model_name, api_key = get_ai_client(header_key)
+    client, model_name, api_key = get_ai_client(header_key, request.ai_model, request.ai_base_url)
     
     if not api_key:
         raise HTTPException(

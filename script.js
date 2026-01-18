@@ -5,25 +5,115 @@ const sendBtn = document.getElementById('send-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsPanel = document.getElementById('settings-panel');
 const apiKeyInput = document.getElementById('api-key-input');
+const aiNameInput = document.getElementById('ai-name-input');
+const aiPersonaInput = document.getElementById('ai-persona-input');
+const aiProviderSelect = document.getElementById('ai-provider-select');
+const aiModelSelect = document.getElementById('ai-model-select');
 const saveKeyBtn = document.getElementById('save-key-btn');
+const clearChatBtn = document.getElementById('clear-chat-btn');
+const resetConfigBtn = document.getElementById('reset-config-btn');
+const exportChatBtn = document.getElementById('export-chat-btn');
+const headerTitle = document.querySelector('header h1');
 
-// Carrega o histórico e a chave do localStorage se existir
+// Carrega as configurações do localStorage
 let messageHistory = JSON.parse(localStorage.getItem('jwlIA_history')) || [];
 let userApiKey = localStorage.getItem('jwlIA_api_key') || '';
+let aiName = localStorage.getItem('jwlIA_name') || 'JwlIA';
+let aiPersona = localStorage.getItem('jwlIA_persona') || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
+let aiProvider = localStorage.getItem('jwlIA_provider') || 'https://api.openai.com/v1';
+let aiModel = localStorage.getItem('jwlIA_model') || 'gpt-4o-mini';
 
-if (userApiKey) apiKeyInput.value = userApiKey;
+// Inicializa os campos da UI
+function initUI() {
+    if (userApiKey) apiKeyInput.value = userApiKey;
+    aiNameInput.value = aiName;
+    aiPersonaInput.value = aiPersona;
+    aiProviderSelect.value = aiProvider;
+    aiModelSelect.value = aiModel;
+    headerTitle.innerText = aiName;
+    userInput.placeholder = `Conversar com ${aiName}...`;
+
+    const initialWelcome = document.querySelector('.welcome-message .message-bubble p');
+    if (initialWelcome && messageHistory.length === 0) {
+        initialWelcome.innerText = `Olá! Eu sou a ${aiName}. Como posso te ajudar hoje?`;
+    }
+}
+
+initUI();
 
 // Alternar painel de configurações
 settingsBtn.addEventListener('click', () => {
     settingsPanel.classList.toggle('hidden');
 });
 
-// Salvar chave de API
+// Salvar todas as configurações
 saveKeyBtn.addEventListener('click', () => {
     userApiKey = apiKeyInput.value.trim();
+    aiName = aiNameInput.value.trim() || 'JwlIA';
+    aiPersona = aiPersonaInput.value.trim() || 'Você é JwlIA, uma assistente pessoal inteligente e prestativa.';
+    aiProvider = aiProviderSelect.value;
+    aiModel = aiModelSelect.value;
+
     localStorage.setItem('jwlIA_api_key', userApiKey);
-    alert('Configurações salvas!');
+    localStorage.setItem('jwlIA_name', aiName);
+    localStorage.setItem('jwlIA_persona', aiPersona);
+    localStorage.setItem('jwlIA_provider', aiProvider);
+    localStorage.setItem('jwlIA_model', aiModel);
+
+    initUI();
+    alert('Configurações salvas com sucesso!');
     settingsPanel.classList.add('hidden');
+});
+
+// Redefinir Tudo (Reset de Fábrica)
+resetConfigBtn.addEventListener('click', () => {
+    if (confirm('Deseja resetar todas as configurações (Chave, Nome, Tema)? Isso não apaga o chat.')) {
+        const keys = ['jwlIA_api_key', 'jwlIA_name', 'jwlIA_persona', 'jwlIA_provider', 'jwlIA_model'];
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.reload();
+    }
+});
+
+// Exportar Chat em TXT
+exportChatBtn.addEventListener('click', () => {
+    if (messageHistory.length === 0) return alert('Não há mensagens para exportar.');
+
+    let content = `Histórico de Conversa - ${aiName}\nData: ${new Date().toLocaleString()}\n\n`;
+    messageHistory.forEach(msg => {
+        const label = msg.role === 'user' ? 'Você' : aiName;
+        content += `[${label}]: ${msg.content}\n\n`;
+    });
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversa-${aiName.toLowerCase()}-${new Date().getTime()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+// Limpar Histórico de Chat
+clearChatBtn.addEventListener('click', () => {
+    if (confirm('Tem certeza que deseja apagar todo o histórico de mensagens?')) {
+        messageHistory = [];
+        localStorage.removeItem('jwlIA_history');
+
+        // Limpa o container visualmente (mantendo apenas o boas-vindas)
+        chatContainer.innerHTML = '';
+        const welcome = document.createElement('div');
+        welcome.className = 'welcome-message';
+        welcome.innerHTML = `
+            <div class="bot-avatar">J</div>
+            <div class="message-bubble">Olá! Eu sou a ${aiName}. Como posso te ajudar hoje?</div>
+        `;
+        chatContainer.appendChild(welcome);
+
+        alert('Histórico apagado!');
+        settingsPanel.classList.add('hidden');
+    }
 });
 
 function appendMessage(role, content, isHistory = false) {
@@ -87,7 +177,10 @@ chatForm.addEventListener('submit', async (e) => {
                 'Authorization': userApiKey ? `Bearer ${userApiKey}` : ''
             },
             body: JSON.stringify({
-                messages: messageHistory
+                messages: messageHistory,
+                system_instruction: aiPersona,
+                ai_model: aiModel,
+                ai_base_url: aiProvider
             })
         });
 
