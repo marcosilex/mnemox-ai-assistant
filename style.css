@@ -685,6 +685,22 @@ h1 {
     color: var(--text-main);
     font-family: inherit;
     font-size: 1rem;
+    resize: none;
+    /* Impede redimensionamento manual */
+    overflow-y: auto;
+    /* Permite scroll vertical quando necessário */
+    overflow-x: hidden;
+    /* Oculta scroll horizontal */
+    max-height: 150px;
+    /* Altura máxima antes de começar a rolar */
+    line-height: 1.5;
+    /* Espaçamento de linha legível */
+    padding: 8px 0;
+    /* Espaçamento vertical */
+    word-wrap: break-word;
+    /* Quebra palavras longas */
+    white-space: pre-wrap;
+    /* Preserva quebras de linha e permite wrap */
 }
 
 #send-btn {

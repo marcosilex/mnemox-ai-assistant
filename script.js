@@ -253,6 +253,7 @@ chatForm.addEventListener('submit', async (e) => {
     appendMessage('user', text);
     messageHistory.push({ role: 'user', content: text });
     userInput.value = '';
+    userInput.style.height = 'auto'; // Reset height after sending
 
     const typing = document.createElement('div');
     typing.className = 'typing';
@@ -291,6 +292,12 @@ chatForm.addEventListener('submit', async (e) => {
         if (typing) typing.remove();
         appendMessage('assistant', 'Erro de conexão.');
     }
+});
+
+// Auto-resize textarea conforme o usuário digita
+userInput.addEventListener('input', function () {
+    this.style.height = 'auto'; // Reset para calcular nova altura
+    this.style.height = Math.min(this.scrollHeight, 150) + 'px'; // Limita a 150px (max-height do CSS)
 });
 
 initUI();
